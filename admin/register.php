@@ -1,6 +1,7 @@
 <?php
 require "../requires/common.php";
 require "../requires/db.php";
+require "../requires/common_function.php";
 $error = false;
 $name =
   $name_error =
@@ -63,8 +64,19 @@ if (isset($_POST['form_sub']) && $_POST['form_sub'] == 1) {
     $error = true;
     $password_error = 'Password must be less then 30.';
   }
-  if(!$error){
-    
+  if (!$error) {
+    $data = [
+      'name'      => $name,
+      'email'     => $email,
+      'phone'     => $phone,
+      'password'  => md5($password),
+      'role'      => 'admin',
+    ];
+    $res = insertData('users', $mysqli, $data);
+    if ($res) {
+      $url = $admin_base_url . "login.php?success=Register Success";
+      header("Location: $url");
+    }
   }
 }
 ?>
@@ -192,21 +204,21 @@ if (isset($_POST['form_sub']) && $_POST['form_sub'] == 1) {
                 <label for="name" class="form-label">Name</label>
                 <input type="text" class="form-control" id="name" name="name"
                   placeholder="Enter your name"
-                  autofocus />
+                  autofocus value="<?= $name ?>" />
                 <?php if ($error && $name_error) { ?>
                   <span class="text-danger"><?= $name_error ?></span>
                 <?php } ?>
               </div>
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" />
+                <input type="text" class="form-control" id="email" name="email" value="<?= $email ?>" placeholder="Enter your email" />
                 <?php if ($error && $email_error) { ?>
                   <span class="text-danger"><?= $email_error ?></span>
                 <?php } ?>
               </div>
               <div class="mb-3">
                 <label for="phone" class="form-label">Phone</label>
-                <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter your phone" />
+                <input type="text" class="form-control" id="phone" name="phone" value="<?= $phone ?>" placeholder="Enter your phone" />
                 <?php if ($error && $phone_error) { ?>
                   <span class="text-danger"><?= $phone_error ?></span>
                 <?php } ?>
@@ -219,6 +231,7 @@ if (isset($_POST['form_sub']) && $_POST['form_sub'] == 1) {
                     id="password"
                     class="form-control"
                     name="password"
+                    value="<?= $password ?>"
                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
                   <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                 </div>

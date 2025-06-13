@@ -1,20 +1,49 @@
 <?php
+session_start();
 require "../requires/common.php";
+require "../requires/db.php";
+require "../requires/common_function.php";
+$error = false;
+$error_msg =
+  $success_msg =
+  $email =
+  $email_error =
+  $password =
+  $password_error = '';
+if (isset($_POST['form_sub']) && $_POST['form_sub'] == 1) {
+  $email = $mysqli->real_escape_string($_POST['email']);
+  $password = $mysqli->real_escape_string($_POST['password']);
+  if ($email === '') {
+    $error = true;
+    $email_error = "Please Enter Your Email.";
+  }
+  if ($password == '') {
+    $error = true;
+    $password_error = "Please Enter Your Password.";
+  }
+  if (!$error) {
+    $sql = "SELECT * FROM `users` WHERE  `email`='$email'";
+    $res = $mysqli->query($sql);
+    if ($res->num_rows > 0) {
+      $data = $res->fetch_assoc();
+      if ($data['password'] === md5($password)) {
+        $_SESSION['name'] = $data['name'];
+        $_SESSION['email'] = $data['email'];
+        $_SESSION['role'] = $data['role'];
+        header("Location: $admin_base_url");
+      } else {
+        $error = true;
+        $password_error = "Your password is wrong";
+      }
+    } else {
+      $error = true;
+      $email_error = "This email is not register";
+    }
+  }
+}
 ?>
 <!DOCTYPE html>
 
-<!-- =========================================================
-* Sneat - Bootstrap 5 HTML Admin Template - Pro | v1.0.0
-==============================================================
-
-* Product Page: https://themeselection.com/products/sneat-bootstrap-html-admin-template/
-* Created by: ThemeSelection
-* License: You must have a valid license purchased in order to legally use the theme for your project.
-* Copyright ThemeSelection (https://themeselection.com)
-
-=========================================================
- -->
-<!-- beautify ignore:start -->
 <html
   lang="en"
   class="light-style customizer-hide"
@@ -133,24 +162,18 @@ require "../requires/common.php";
             <h4 class="mb-2">Welcome to Sneat! 👋</h4>
             <p class="mb-4">Please sign-in to your account and start the adventure</p>
 
-            <form id="formAuthentication" class="mb-3" action="index.html" method="POST">
+            <form id="formAuthentication" class="mb-3" action="<?= $admin_base_url . "login.php" ?>" method="POST">
               <div class="mb-3">
-                <label for="email" class="form-label">Email or Username</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="email"
-                  name="email-username"
-                  placeholder="Enter your email or username"
-                  autofocus />
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" name="email"
+                  placeholder="Enter your email"
+                  autofocus value="<?= $email ?>" />
+                <?php if ($error && $email_error) { ?>
+                  <span class="text-danger"><?= $email_error ?></span>
+                <?php } ?>
               </div>
               <div class="mb-3 form-password-toggle">
-                <div class="d-flex justify-content-between">
-                  <label class="form-label" for="password">Password</label>
-                  <a href="auth-forgot-password-basic.html">
-                    <small>Forgot Password?</small>
-                  </a>
-                </div>
+
                 <div class="input-group input-group-merge">
                   <input
                     type="password"
@@ -158,17 +181,15 @@ require "../requires/common.php";
                     class="form-control"
                     name="password"
                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                    aria-describedby="password" />
+                    aria-describedby="password" value="<?= $password ?>" />
                   <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                 </div>
+                <?php if ($error && $password_error) { ?>
+                  <span class="text-danger"><?= $password_error ?></span>
+                <?php } ?>
               </div>
               <div class="mb-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="remember-me" />
-                  <label class="form-check-label" for="remember-me"> Remember Me </label>
-                </div>
-              </div>
-              <div class="mb-3">
+                <input type="hidden" name="form_sub" value="1" />
                 <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
               </div>
             </form>
@@ -204,9 +225,6 @@ require "../requires/common.php";
   <script src="./assets/js/main.js"></script>
 
   <!-- Page JS -->
-
-  <!-- Place this tag in your head or just before your close body tag. -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 
 </html>
