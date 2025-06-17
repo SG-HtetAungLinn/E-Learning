@@ -1,4 +1,6 @@
 </div>
+<!-- / Layout page -->
+</div>
 <!-- Overlay -->
 <div class="layout-overlay layout-menu-toggle"></div>
 </div>
@@ -23,9 +25,6 @@
 
 <!-- Page JS -->
 <script src="./assets/js/dashboards-analytics.js"></script>
-
-<!-- Place this tag in your head or just before your close body tag. -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 
 </html>
