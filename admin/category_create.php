@@ -4,8 +4,6 @@ require '../requires/check_auth.php';
 require "../requires/common_function.php";
 require "../requires/db.php";
 
-
-
 $error = false;
 $name =
     $name_eror = '';
@@ -40,7 +38,12 @@ require "./layouts/header.php";
 <div class="content-wrapper">
     <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Category/</span>Create</h4>
+        <div class="d-flex justify-content-between">
+            <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Category/</span>Create</h4>
+            <div class="">
+                <a href="<?= $admin_base_url . "category_list.php" ?>" class="btn btn-dark">Back</a>
+            </div>
+        </div>
         <div class="d-flex justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="card">

@@ -1,9 +1,10 @@
 <?php
+require '../requires/common.php';
+require '../requires/check_auth.php';
+require "../requires/common_function.php";
+require "../requires/db.php";
 require "./layouts/header.php";
 ?>
-
-
-
 <!-- Content wrapper -->
 <div class="content-wrapper">
   <!-- Content -->

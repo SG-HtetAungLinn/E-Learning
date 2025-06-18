@@ -25,6 +25,16 @@
 
 <!-- Page JS -->
 <script src="./assets/js/dashboards-analytics.js"></script>
+
+<!-- Sweet alert 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function() {
+        setTimeout(function() {
+            $('.alert').hide()
+        }, 3000)
+    })
+</script>
 </body>
 
 </html>

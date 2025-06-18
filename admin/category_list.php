@@ -3,6 +3,25 @@ require '../requires/common.php';
 require '../requires/check_auth.php';
 require "../requires/common_function.php";
 require "../requires/db.php";
+
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+    $res = deleteData('categories', $mysqli, "`id`='$delete_id'");
+    if ($res) {
+        $url = $admin_base_url . "category_list.php?success=Category Delete Success";
+        header("Location: $url");
+        exit;
+    }
+}
+$success_msg = "";
+$error_msg = "";
+if (isset($_GET['success'])) {
+    $success_msg = $_GET['success'];
+}
+if (isset($_GET['error'])) {
+    $error_msg = $_GET['error'];
+}
+$res = selectData('categories', $mysqli, $column = "*", $where = "", $order = "ORDER BY id DESC");
 require "./layouts/header.php";
 ?>
 
@@ -14,6 +33,21 @@ require "./layouts/header.php";
             <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Category/</span>List</h4>
             <div class="">
                 <a href="<?= $admin_base_url ?>category_create.php" class="btn btn-primary">Create Category</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 offset-md-7 col-12">
+                <?php if ($success_msg) { ?>
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <?= $success_msg ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php } ?>
+                <?php if ($error_msg) { ?>
+                    <div class="alert alert-danger">
+                        <?= $error_msg ?>
+                    </div>
+                <?php } ?>
             </div>
         </div>
         <div class="card">
@@ -29,36 +63,21 @@ require "./layouts/header.php";
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Name 1</td>
-                            <td>16.5.2025 2:25 PM</td>
-                            <td>16.5.2025 2:25 PM</td>
-                            <td>
-                                <a href="" class="btn btn-primary">Edit</a>
-                                <a href="" class="btn btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Name 2</td>
-                            <td>16.5.2025 2:25 PM</td>
-                            <td>16.5.2025 2:25 PM</td>
-                            <td>
-                                <a href="" class="btn btn-primary">Edit</a>
-                                <a href="" class="btn btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Name 3</td>
-                            <td>16.5.2025 2:25 PM</td>
-                            <td>16.5.2025 2:25 PM</td>
-                            <td>
-                                <a href="" class="btn btn-primary">Edit</a>
-                                <a href="" class="btn btn-danger">Delete</a>
-                            </td>
-                        </tr>
+                        <?php if ($res->num_rows > 0) {
+                            while ($row = $res->fetch_assoc()) { ?>
+                                <tr>
+                                    <td><?= $row['id'] ?></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= date("Y/F/d h:i:s A", strtotime($row['created_at']))  ?></td>
+                                    <td><?= date("Y/m/d h:i:s A", strtotime($row['updated_at']))  ?></td>
+                                    <td>
+                                        <a href="<?= $admin_base_url . "category_edit.php?id=" . $row['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                                        <button type="button" class="btn btn-sm btn-danger delete_btn" data-id="<?= $row['id'] ?>">Delete</button>
+                                    </td>
+                                </tr>
+                        <?php }
+                        } ?>
+
                     </tbody>
                 </table>
             </div>
@@ -73,3 +92,26 @@ require "./layouts/header.php";
 <?php
 require "./layouts/footer.php";
 ?>
+
+<script>
+    $(document).ready(function() {
+        $('.delete_btn').click(function() {
+            const id = $(this).data('id')
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "category_list.php?delete_id=" + id
+                }
+            });
+
+        })
+    })
+</script>
