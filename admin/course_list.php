@@ -73,6 +73,7 @@ require "./layouts/header.php";
                                     <td>
                                         <a href="<?= $admin_base_url . "course_edit.php?id=" . $row['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
                                         <button type="button" class="btn btn-sm btn-danger delete_btn" data-id="<?= $row['id'] ?>">Delete</button>
+                                        <a href="<?= $admin_base_url . "course_lesson.php?id=" . $row['id'] ?>" class="btn btn-sm btn-info">Lesson</a>
                                     </td>
                                 </tr>
                             <?php }

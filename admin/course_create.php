@@ -79,6 +79,7 @@ if (isset($_POST['form_sub']) && $_POST['form_sub'] == 1) {
         $error = true;
         $price_error = "Course Price must be less then 10.";
     }
+    // Subject
     if (empty($subject)) {
         $error = true;
         $subject_error = "Please Choose Subject.";
@@ -92,9 +93,19 @@ if (isset($_POST['form_sub']) && $_POST['form_sub'] == 1) {
             'price'         => $price
         ];
         if (insertData('courses', $mysqli, $data)) {
-            $url = $admin_base_url . "course_list.php?success=Course Create Success";
-            header("Location: $url");
-            exit;
+            $insert_id = $mysqli->insert_id;
+            foreach ($subject as $sub) {
+                $subject_data = [
+                    'course_id' => $insert_id,
+                    'subject_id' => $sub
+                ];
+                $res = insertData('course_subject', $mysqli, $subject_data);
+            }
+            if ($res) {
+                $url = $admin_base_url . "course_list.php?success=Course Create Success";
+                header("Location: $url");
+                exit;
+            }
         }
     }
 }
