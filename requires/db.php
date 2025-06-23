@@ -76,30 +76,32 @@ function createTable($mysqli)
                     )";
     $mysqli->query($course_sql);
 
+    // course_subject
+    $course_sub_sql = "CREATE TABLE IF NOT EXISTS `course_subject`
+        (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        course_id INT NOT NULL,
+        subject_id INT NOT NULL, 
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (course_id) REFERENCES lessons(id) ON DELETE CASCADE,
+        FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
+        )";
+    $mysqli->query($course_sub_sql);
+
     // lesson
     $lesson_sql = "CREATE TABLE IF NOT EXISTS `lessons`
                     (
                     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    course_id INT NOT NULL,
+                    course_subject_id INT NOT NULL,
+                    name VARCHAR(100) NOT NULL,
+                    description VARCHAR(255) DEFAULT NULL,
                     link  VARCHAR(255) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (course_id) REFERENCES lessons(id) ON DELETE CASCADE
+                    FOREIGN KEY (course_subject_id) REFERENCES course_subject(id) ON DELETE CASCADE
                     )";
     $mysqli->query($lesson_sql);
-
-    // course_subject
-    $course_sub_sql = "CREATE TABLE IF NOT EXISTS `course_subject`
-                    (
-                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    course_id INT NOT NULL,
-                    subject_id INT NOT NULL, 
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (course_id) REFERENCES lessons(id) ON DELETE CASCADE,
-                    FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
-                    )";
-    $mysqli->query($course_sub_sql);
 
     // course_student
     $course_std_sql = "CREATE TABLE IF NOT EXISTS `course_student`
