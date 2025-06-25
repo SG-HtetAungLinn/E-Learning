@@ -1,5 +1,6 @@
 <?php
 session_start();
+$auth = false;
 if (
     !isset($_SESSION['name']) &&
     !isset($_SESSION['email']) &&
@@ -7,4 +8,6 @@ if (
 ) {
     $url =  $admin_base_url . "logout.php";
     header("Location: $url");
+} else {
+    $auth = true;
 }

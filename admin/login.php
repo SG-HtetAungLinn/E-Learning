@@ -30,7 +30,11 @@ if (isset($_POST['form_sub']) && $_POST['form_sub'] == 1) {
         $_SESSION['name'] = $data['name'];
         $_SESSION['email'] = $data['email'];
         $_SESSION['role'] = $data['role'];
-        header("Location: $admin_base_url");
+        if ($data['role'] === 'admin') {
+          header("Location: $admin_base_url");
+        } else {
+          header("Location: $base_url");
+        }
       } else {
         $error = true;
         $password_error = "Your password is wrong";

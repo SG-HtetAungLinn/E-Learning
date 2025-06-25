@@ -1,6 +1,7 @@
 <?php
 require '../requires/common.php';
 require '../requires/check_auth.php';
+require '../requires/admin_auth.php';
 require "../requires/common_function.php";
 require "../requires/db.php";
 
@@ -22,6 +23,7 @@ if (isset($_GET['error'])) {
     $error_msg = $_GET['error'];
 }
 $id = isset($_GET['id']) ? $_GET['id'] : '';
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 $subject_id = isset($_GET['subject_id']) ? $_GET['subject_id'] : '';
 $subject_id = $subject_id === '' ? '' : $subject_id;
 if (!$id) {
@@ -46,6 +48,9 @@ $sql = "SELECT
         WHERE course_subject.course_id = '$id' ";
 if ($subject_id !== '') {
     $sql .= " AND course_subject.subject_id = '$subject_id'";
+}
+if ($search !== '') {
+    $sql .= " AND lessons.name LIKE '%$search%'";
 }
 $sql .= " ORDER BY lessons.id DESC";
 $lesson_res = $mysqli->query($sql);
@@ -190,20 +195,30 @@ require "./layouts/header.php";
             </div>
             <div class="col-12 mb-3">
                 <div class="card">
-                    <div class="card-body">
-                        <div class="col-lg-4 col-md-6 col-12 mb-3">
+                    <div class="card-body row">
+                        <div class="col-lg-4 col-md-6 col-12">
                             <select name="select_subject" class="form-select" id="select_subject">
                                 <option value="">All Subject</option>
                                 <?php
                                 if ($select_subject_res->num_rows > 0) {
                                     while ($row = $select_subject_res->fetch_assoc()) { ?>
-                                        <option value="<?= $row['subject_id'] ?>"><?= $row['subject_name'] ?></option>
+                                        <option value="<?= $row['subject_id'] ?>" <?= $subject_id === $row['subject_id'] ? 'selected' : '' ?>><?= $row['subject_name'] ?></option>
                                 <?php
                                     }
                                 }
                                 ?>
                             </select>
                             <input type="hidden" class="course_id" value="<?= $id ?>">
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <form action="" method="get">
+                                <input type="hidden" name="id" value="<?= $id ?>">
+                                <input type="hidden" name="subject_id" value="<?= $subject_id ?>">
+                                <div class="input-group">
+                                    <input type="search" class="form-control" name="search" value="<?= $search ?>">
+                                    <button class="btn btn-primary">Search</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -212,24 +227,25 @@ require "./layouts/header.php";
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-
                             <?php if ($lesson_res->num_rows > 0) {
                                 while ($row = $lesson_res->fetch_assoc()) { ?>
                                     <div class="col-md-4 mb-3">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="ratio ratio-16x9">
+                                                <div class="ratio ratio-16x9 mb-3">
                                                     <iframe src="<?= "https://www.youtube.com/embed/" . $row['link'] ?>" title="Video 1" allowfullscreen></iframe>
                                                 </div>
-                                                <hr />
+                                                <small><?= $row['subject_name'] ?></small>
                                                 <h4>
                                                     <?= $row['lesson_name'] ?>
                                                 </h4>
                                             </div>
                                         </div>
                                     </div>
-                            <?php }
-                            } ?>
+                                <?php }
+                            } else { ?>
+                                <h2 class="m-0 text-center text-danger">This is no lesson</h2>
+                            <?php } ?>
                         </div>
 
                     </div>

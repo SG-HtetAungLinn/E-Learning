@@ -38,7 +38,7 @@ $user_data = [
         'email'     => 'user@gmail.com',
         'phone'     => '0912345678',
         'password'  => md5('password'),
-        'role'      => 'user'
+        'role'      => 'student'
     ],
 ];
 foreach ($user_data as $data) {

@@ -1,6 +1,7 @@
 <?php
 require '../requires/common.php';
 require '../requires/check_auth.php';
+require '../requires/admin_auth.php';
 require "../requires/common_function.php";
 require "../requires/db.php";
 
