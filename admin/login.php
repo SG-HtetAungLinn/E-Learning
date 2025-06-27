@@ -27,6 +27,7 @@ if (isset($_POST['form_sub']) && $_POST['form_sub'] == 1) {
     if ($res->num_rows > 0) {
       $data = $res->fetch_assoc();
       if ($data['password'] === md5($password)) {
+        $_SESSION['id'] = $data['id'];
         $_SESSION['name'] = $data['name'];
         $_SESSION['email'] = $data['email'];
         $_SESSION['role'] = $data['role'];

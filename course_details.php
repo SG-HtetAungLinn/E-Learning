@@ -15,10 +15,26 @@ $sql  = "SELECT
         FROM `courses`
         LEFT JOIN `categories` ON categories.id = courses.category_id
         WHERE courses.id = '$id'";
-
 $course_res =  $mysqli->query($sql);
 if ($course_res->num_rows > 0) {
     $courseData =  $course_res->fetch_assoc();
+}
+$subject_sql = "SELECT subjects.name
+                FROM `course_subject` 
+                LEFT JOIN subjects ON subjects.id = course_subject.subject_id
+                WHERE course_subject.course_id = '$id'";
+$subject_res = $mysqli->query($subject_sql);
+$user_id = $_SESSION['id'];
+
+$is_enroll_sql = "SELECT * 
+                    FROM `course_student`
+                    WHERE user_id=$user_id 
+                        AND course_id=$id 
+                        AND status='1'";
+$is_enroll_res = $mysqli->query($is_enroll_sql);
+$is_enroll = false;
+if ($is_enroll_res->num_rows > 0) {
+    $is_enroll = true;
 }
 require "./layouts/header.php";
 ?>
@@ -45,6 +61,14 @@ require "./layouts/header.php";
                             <i class="fa-regular fa-credit-card text-warning fs-4 me-3"></i>
                             <span><?= $courseData['price'] ?> MMK</span>
                         </div>
+                        <div class="mb-3 d-flex gap-2 flex-wrap">
+                            <?php if ($subject_res->num_rows > 0) {
+                                while ($row = $subject_res->fetch_assoc()) { ?>
+                                    <div class="btn btn-light"><?= $row['name'] ?></div>
+                            <?php }
+                            } ?>
+
+                        </div>
                         <div class="mb-3">
                             Student
                             <strong class="text-primary">0</strong>
@@ -53,35 +77,41 @@ require "./layouts/header.php";
                             Course Details :
                             <p><?= $courseData['description'] ?></p>
                         </div>
-                        <div class="">
-                            <button class="btn btn-warning w-100">Enroll</button>
-                        </div>
+                        <?php if (!$is_enroll) { ?>
+                            <div class="">
+                                <button class="btn btn-warning w-100 enroll_btn">Enroll</button>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
-            <div class="col-12 row">
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Accordion Item #1
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                            <div class="col-12 mb-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        a
+            <?php if ($is_enroll) { ?>
+                <div class="col-12 row">
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Accordion Item #1
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                <div class="col-12 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            a
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            </div>
+                </div>
+            <?php } ?>
         </div>
     </div>
+    <input type="hidden" class="course_id" value="<?= $id ?>">
+    <input type="hidden" class="user_id" value="<?= $user_id ?>">
 </section>
 
 <?php
@@ -96,12 +126,11 @@ require "./layouts/footer.php";
                 url: "get_lesson.php",
                 method: "POST",
                 data: {
-                    id: 1
+                    id: $('.course_id').val()
                 },
                 success: function(res) {
                     $('.accordion').html('');
                     res.forEach((item, index) => {
-                        console.log(item);
                         let html = `<div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${item.subject_id}" aria-expanded="true" aria-controls="collapse${item.subject_id}">
@@ -143,5 +172,49 @@ require "./layouts/footer.php";
             })
             return html;
         }
+        $('.enroll_btn').click(function() {
+            Swal.fire({
+                title: "Are you sure enroll?",
+                text: "You won't be able to revert this!",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Confirm"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "enroll.php",
+                        type: "POST",
+                        data: {
+                            'user_id': $('.user_id').val(),
+                            'course_id': $('.course_id').val(),
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: res.message,
+                                    icon: "success"
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: res.message,
+                                    icon: "error"
+                                });
+                            }
+                        },
+                        error: function(res, a, b) {
+                            Swal.fire({
+                                title: "Error!",
+                                text: b,
+                                icon: "error"
+                            });
+                        }
+                    })
+                }
+            });
+        })
     })
 </script>

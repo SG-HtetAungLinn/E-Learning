@@ -153,7 +153,7 @@ require "./layouts/header.php";
                                         <option value="">Please Choose Subject</option>
                                         <?php if ($subject_res->num_rows > 0) {
                                             while ($row = $subject_res->fetch_assoc()) { ?>
-                                                <option value="<?= $row['subject_id'] ?>"><?= $row['subject_name'] ?></option>
+                                                <option value="<?= $row['id'] ?>"><?= $row['subject_name'] ?></option>
                                         <?php
                                             }
                                         }
