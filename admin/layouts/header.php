@@ -199,6 +199,13 @@
                             </li>
                         </ul>
                     </li>
+                    <!-- Enroll -->
+                    <li class="menu-item <?= $current_page == "enroll_list.php" ? "active" : "" ?>">
+                        <a href="<?= $admin_base_url . "enroll_list.php" ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Enroll</div>
+                        </a>
+                    </li>
 
                 </ul>
             </aside>

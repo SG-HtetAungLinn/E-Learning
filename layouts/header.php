@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="assets/css/owl.css">
     <link rel="stylesheet" href="assets/css/lightbox.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="vendor/jquery/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
@@ -49,7 +50,7 @@
                             </li>
                             <li class="scroll-to-section"><a href="#courses">Courses</a></li>
                             <li class="scroll-to-section"><a href="#contact">Contact Us</a></li>
-                            <li class=""><a href="<?php echo $admin_base_url . "logout.php" ?>">Logout</a></li>
+                            <li class="scroll-to-section"><a href="#logout" class="logout">Logout</a></li>
                         </ul>
                         <a class='menu-trigger'>
                             <span>Menu</span>
@@ -60,6 +61,13 @@
             </div>
         </div>
     </header>
+    <script>
+        $(document).ready(function() {
+            $('.logout').click(function() {
+                window.location.href = "<?php echo $admin_base_url . "logout.php" ?>"
+            })
+        })
+    </script>
     <!-- ***** Header Area End ***** -->
     <!-- ***** Main Banner Area Start ***** -->
     <section class="section main-banner" id="top" data-section="section1">

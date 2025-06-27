@@ -29,11 +29,11 @@ $user_id = $_SESSION['id'];
 $is_enroll_sql = "SELECT * 
                     FROM `course_student`
                     WHERE user_id=$user_id 
-                        AND course_id=$id 
-                        AND status='1'";
+                        AND course_id=$id";
 $is_enroll_res = $mysqli->query($is_enroll_sql);
 $is_enroll = false;
 if ($is_enroll_res->num_rows > 0) {
+    $enroll_data = $is_enroll_res->fetch_assoc();
     $is_enroll = true;
 }
 require "./layouts/header.php";
@@ -81,11 +81,15 @@ require "./layouts/header.php";
                             <div class="">
                                 <button class="btn btn-warning w-100 enroll_btn">Enroll</button>
                             </div>
+                        <?php } elseif ($is_enroll && !$enroll_data['status']) { ?>
+                            <div class="">
+                                <button class="btn btn-warning w-100" disabled>Waiting...</button>
+                            </div>
                         <?php } ?>
                     </div>
                 </div>
             </div>
-            <?php if ($is_enroll) { ?>
+            <?php if ($is_enroll && $enroll_data['status']) { ?>
                 <div class="col-12 row">
                     <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
@@ -196,7 +200,10 @@ require "./layouts/footer.php";
                                     title: "Success!",
                                     text: res.message,
                                     icon: "success"
+                                }).then(function() {
+                                    location.reload();
                                 });
+
                             } else {
                                 Swal.fire({
                                     title: "Error!",
